@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enums;
+
+enum BillGroup:string {
+    case Facebook = 'FB';
+    case Google = 'GG';
+    case Lazada = 'LZD';
+    case Tiki = 'TK';
+    case Shopee = 'SP';
+    case ShopeeMall = 'SPM';
+    case Member = 'NV';
+    case Doctor = 'BS';
+}
