@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LakeController;
+use Maatwebsite\Excel\Facades\Excel;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,5 +34,21 @@ Route::post('/import-to-lake',[LakeController::class,'import_raw_data'])->name('
 Route::prefix('lake')->group(function (){
     Route::get('/data-raw',[LakeController::class,'index'])->name('list.dataraw.lake');
 });
+
+Route::get('/example-import', function() {
+    return view('example-import');
+});
+
+Route::post('/example-import', function (\Illuminate\Http\Request $request) {
+    $validField = ['order_name', 'carer_code', 'bill_order_time', 'bill_group'];
+    $params = $request->only($validField);
+
+    $file = $request->file('file');
+    $instance = new \App\Imports\RawDataImport($params);
+    Excel::import($instance, $file);
+    if (count($instance->getErrorRows())) dd('Có dòng bị lỗi vui lòng sửa lại file. Đang cập nhật tính năng hiển thị vị trí lỗi');
+    \App\Models\DemoRawData::insert($instance->getValidRows());
+    dd("Không tìm thấy lỗi ,đã import các dữ liệu dưới đây", $instance->getValidRows());
+})->name('upload.file.demo');
 
 require __DIR__.'/auth.php';
