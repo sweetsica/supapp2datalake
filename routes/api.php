@@ -1,5 +1,6 @@
 <?php
 
+use App\Imports\batch\ImportRawData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
@@ -38,4 +39,31 @@ Route::post('upload-file', function (Request $request) {
 //    dd($data);
 
     return 'done';
+});
+
+Route::post('batch-upload-file', function (Request $request) {
+    $file = $request->file('file');
+    $results = [];
+
+    $instance = new ImportRawData;
+    $instance->import($file);
+
+
+    if (!$request->file('file')) throw new Exception('Error');
+    $params = [
+        'id_bill' => 'Mã phiếu',
+        'id_bill_taken' => 'Mã phiếu đặt'
+    ];
+    $instance = new \App\Imports\RawDataImport($params);
+    $data = Excel::import($instance, $file);
+    dd($instance);
+//    $result = Excel::import($instance, $file);
+
+//    $results[] = [
+//        'file' => $file->getClientOriginalName(),
+//        'result' => $result,
+//    ];
+
+//    dump($results);
+    return 'Return response';
 });

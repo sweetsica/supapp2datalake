@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class RawData extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['id', 'status_bill', 'id_bill_taken'];
 }
